@@ -1,0 +1,564 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Movies</title>
+
+<style>
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif;
+}
+
+body{
+background:#f5f5f7;
+margin:0;
+color:#111;
+}
+
+/* SECTION */
+
+.section{
+margin-bottom:60px;
+}
+
+.section-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:20px;
+}
+
+.section-title{
+font-size:28px;
+font-weight:700;
+}
+
+/* VIEW ALL BUTTON */
+
+.view-all{
+background:#0071e3;
+color:white;
+border:none;
+padding:8px 16px;
+border-radius:20px;
+font-size:14px;
+cursor:pointer;
+transition:0.2s;
+}
+
+.view-all:hover{
+background:#0062c3;
+}
+
+/* HORIZONTAL SCROLL */
+
+.scroll-row{
+  display:flex;
+  gap:18px;
+  overflow-x:auto;
+  padding:14px 14px 26px;
+  scroll-padding-left:14px;
+  scroll-padding-right:14px;
+  -webkit-overflow-scrolling:touch;
+}
+
+.scroll-row::-webkit-scrollbar{
+  display:none;
+}
+
+.scroll-row::after{
+content:"";
+flex:0 0 10px;
+}
+
+.scroll-row::-webkit-scrollbar{
+display:none;
+}
+
+/* MOVIE CARD */
+
+.movie-card{
+
+flex:0 0 220px;
+
+background:white;
+
+border-radius:16px;
+overflow:hidden;
+
+box-shadow:0 8px 20px rgba(0,0,0,0.08);
+
+transition:0.25s;
+
+display:flex;
+flex-direction:column;
+
+}
+
+.movie-card:hover{
+transform:translateY(-4px);
+box-shadow:0 14px 30px rgba(0,0,0,0.12);
+}
+
+.movie-poster{
+width:100%;
+aspect-ratio:2/3;
+object-fit:cover;
+}
+
+/* CONTENT */
+
+.movie-content{
+padding:12px;
+display:flex;
+flex-direction:column;
+gap:6px;
+}
+
+.movie-title{
+font-size:15px;
+font-weight:600;
+line-height:1.35;
+word-break:break-word;
+}
+
+.movie-meta{
+font-size:12px;
+color:#666;
+line-height:1.4;
+}
+
+/* FILTER CARDS */
+
+.filter-card{
+
+flex:0 0 170px;
+
+background:white;
+
+border-radius:16px;
+
+height:120px;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+font-size:20px;
+font-weight:600;
+
+box-shadow:0 8px 20px rgba(0,0,0,0.08);
+
+cursor:pointer;
+
+transition:0.2s;
+
+text-decoration:none;
+color:#111;
+
+}
+
+.filter-card:hover{
+
+transform:scale(1.05);
+
+box-shadow:0 16px 35px rgba(0,0,0,0.18);
+
+z-index:2;
+
+}
+
+</style>
+
+<link rel="stylesheet" href="css/style.css">
+</head>
+
+<body>
+
+<site-header></site-header>
+
+<section class="hero">
+
+<div class="hero-video">
+
+<iframe
+src="https://www.youtube.com/embed/avz06PDqDbM?autoplay=1&mute=1&loop=1&playlist=avz06PDqDbM&controls=0&showinfo=0&rel=0&modestbranding=1"
+frameborder="0"
+allow="autoplay; encrypted-media"
+allowfullscreen>
+</iframe>
+
+</div>
+
+<div class="hero-overlay"></div>
+
+<div class="hero-content">
+
+<h1>Mission Impossible</h1>
+
+<p>
+The final mission begins. Experience the latest Mission Impossible adventure.
+</p>
+
+<div class="hero-buttons">
+
+<button class="btn-primary">
+Random Movie
+</button>
+
+<button class="btn-secondary">
+All Movies
+</button>
+
+</div>
+
+</div>
+
+</section>
+
+<main class="page">
+
+<!-- TOP 10 -->
+
+<div class="section">
+
+<div class="section-header">
+<div class="section-title">Top 10</div>
+
+<button class="view-all"
+onclick="location.href='catalog.html?type=top10'">
+View All
+</button>
+
+</div>
+
+<div class="scroll-row" id="top10"></div>
+
+</div>
+
+
+
+<!-- NEWEST -->
+
+<div class="section">
+
+<div class="section-header">
+<div class="section-title">Newest</div>
+
+<button class="view-all"
+onclick="location.href='catalog.html?type=newest'">
+View All
+</button>
+
+</div>
+
+<div class="scroll-row" id="newest"></div>
+
+</div>
+
+
+
+<!-- GENRES -->
+
+<div class="section">
+
+<div class="section-header">
+<div class="section-title">Genres</div>
+
+<button class="view-all"
+onclick="location.href='catalog.html?type=genres'">
+View All
+</button>
+
+</div>
+
+<div class="scroll-row" id="genres"></div>
+
+</div>
+
+
+
+<!-- YEARS -->
+
+<div class="section">
+
+<div class="section-header">
+<div class="section-title">Years</div>
+
+<button class="view-all"
+onclick="location.href='catalog.html?type=years'">
+View All
+</button>
+
+</div>
+
+<div class="scroll-row" id="years"></div>
+
+</div>
+
+</main>
+
+<site-footer></site-footer>
+
+<script>
+
+/* LIMIT LIST */
+
+function limitList(list,max=5){
+
+if(list.length<=max){
+return list.join(", ")
+}
+
+const visible=list.slice(0,max).join(", ")
+const hidden=list.length-max
+
+return visible+" +"+hidden
+
+}
+
+/* MOVIES */
+
+const movies=[
+
+{
+id:1,
+title:"Inception",
+year:2010,
+genres:["Sci-Fi","Action","Thriller"],
+countries:["USA","UK"],
+poster:"https://image.tmdb.org/t/p/w500/edv5CZvWj09upOsy2Y6IwDhK8bt.jpg"
+},
+
+{
+id:2,
+title:"The Dark Knight",
+year:2008,
+genres:["Action","Crime","Drama"],
+countries:["USA","UK"],
+poster:"https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg"
+},
+
+{
+id:3,
+title:"Interstellar",
+year:2014,
+genres:["Sci-Fi","Drama","Adventure"],
+countries:["USA","UK"],
+poster:"https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg"
+},
+
+{
+id:4,
+title:"Dune: Part Two",
+year:2024,
+genres:["Sci-Fi","Adventure","Drama"],
+countries:["USA","Canada"],
+poster:"https://image.tmdb.org/t/p/w500/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg"
+},
+
+{
+id:5,
+title:"Oppenheimer",
+year:2023,
+genres:["Drama","History","Biography"],
+countries:["USA","UK"],
+poster:"https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2qR.jpg"
+},
+
+{
+id:6,
+title:"Avatar: The Way of Water",
+year:2022,
+genres:["Sci-Fi","Adventure","Action"],
+countries:["USA"],
+poster:"https://image.tmdb.org/t/p/w500/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg"
+},
+
+{
+id:7,
+title:"Joker",
+year:2019,
+genres:["Crime","Drama","Thriller"],
+countries:["USA"],
+poster:"https://image.tmdb.org/t/p/w500/udDclJoHjfjb8Ekgsd4FDteOkCU.jpg"
+},
+
+{
+id:8,
+title:"The Batman",
+year:2022,
+genres:["Action","Crime","Drama"],
+countries:["USA"],
+poster:"https://image.tmdb.org/t/p/w500/74xTEgt7R36Fpooo50r9T25onhq.jpg"
+},
+
+{
+id:9,
+title:"Mad Max: Fury Road",
+year:2015,
+genres:["Action","Adventure","Sci-Fi"],
+countries:["Australia","USA"],
+poster:"https://image.tmdb.org/t/p/w500/8tZYtuWezp8JbcsvHYO0O46tFbo.jpg"
+},
+
+{
+id:10,
+title:"Gladiator",
+year:2000,
+genres:["Action","Drama","Adventure"],
+countries:["USA","UK"],
+poster:"https://image.tmdb.org/t/p/w500/ty8TGRuvJLPUmAR1H1nRIsgwvim.jpg"
+},
+
+{
+id:11,
+title:"Top Gun: Maverick",
+year:2022,
+genres:["Action","Drama"],
+countries:["USA"],
+poster:"https://image.tmdb.org/t/p/w500/62HCnUTziyWcpDaBO2i1DX17ljH.jpg"
+},
+
+{
+id:12,
+title:"Mission: Impossible – Dead Reckoning",
+year:2023,
+genres:["Action","Adventure","Thriller"],
+countries:["USA"],
+poster:"https://image.tmdb.org/t/p/w500/NNxYkU70HPurnNCSiCjYAmacwm.jpg"
+},
+{
+id:13,
+title:"Inception",
+year:2010,
+genres:["Sci-Fi","Action","Thriller"],
+countries:["USA","UK"],
+poster:"https://image.tmdb.org/t/p/w500/edv5CZvWj09upOsy2Y6IwDhK8bt.jpg"
+},
+
+{
+id: 14,
+title:"Очень длинное название фильма которое может быть очень длинным и не должно ломать карточку",
+year:2024,
+genres:["Action","Sci-Fi","Thriller","Drama","Adventure","Mystery"],
+countries:["United States of America","United Kingdom","Canada","Australia","Germany","France"],
+poster:"https://image.tmdb.org/t/p/w500/8UlWHLMpgZm9bx6QYh0NFoq67TZ.jpg"
+},
+
+{
+id: 15,
+title:"Wonder Woman 1984",
+year:2020,
+genres:["Action","Fantasy"],
+countries:["USA"],
+poster:"https://image.tmdb.org/t/p/w500/8UlWHLMpgZm9bx6QYh0NFoq67TZ.jpg"
+}
+
+]
+
+/* CREATE MOVIE CARD */
+
+function createMovieCard(movie){
+
+const card=document.createElement("a")
+
+card.href="movie.html?id="+movie.id
+
+card.className="movie-card"
+
+card.innerHTML=`
+
+<img class="movie-poster" src="${movie.poster}">
+
+<div class="movie-content">
+
+<div class="movie-title">
+${movie.title}
+</div>
+
+<div class="movie-meta">
+${movie.year} • ${limitList(movie.genres)}
+</div>
+
+<div class="movie-meta">
+${limitList(movie.countries)}
+</div>
+
+</div>
+
+`
+
+return card
+
+}
+
+/* RENDER MOVIES */
+
+const top10=document.getElementById("top10")
+const newest=document.getElementById("newest")
+
+movies.forEach(m=>{
+top10.appendChild(createMovieCard(m))
+newest.appendChild(createMovieCard(m))
+})
+
+/* GENRES */
+
+const genresList=[
+"Action",
+"Sci-Fi",
+"Drama",
+"Thriller",
+"Fantasy",
+"Comedy",
+"Horror"
+]
+
+const genresContainer=document.getElementById("genres")
+
+genresList.forEach(g=>{
+
+const card=document.createElement("a")
+
+card.className="filter-card"
+
+card.innerText=g
+
+card.href="catalog.html?genre="+encodeURIComponent(g)
+
+genresContainer.appendChild(card)
+
+})
+
+/* YEARS */
+
+const yearsContainer=document.getElementById("years")
+
+for(let y=2024;y>=2000;y--){
+
+const card=document.createElement("a")
+
+card.className="filter-card"
+
+card.innerText=y
+
+card.href="catalog.html?year="+y
+
+yearsContainer.appendChild(card)
+
+}
+
+</script>
+
+<script src="js/components.js"></script>
+<script src="js/i18n.js"></script>
+
+</body>
+</html>

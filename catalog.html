@@ -1,0 +1,515 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Catalog</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+
+*{
+box-sizing:border-box;
+margin:0;
+padding:0;
+font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif;
+}
+
+body{
+background:#f5f5f7;
+color:#111;
+
+display:flex;
+flex-direction:column;
+min-height:100vh;
+}
+
+/* PAGE */
+
+.page{
+max-width:1300px;
+margin:0 auto;
+padding:40px 20px;
+flex:1;
+width:100%;
+}
+
+/* GRID MOVIES (как на index) */
+
+.grid{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
+gap:20px;
+}
+
+/* GRID FILTERS */
+
+.filters{
+display:grid;
+grid-template-columns:repeat(auto-fill,minmax(180px,1fr));
+gap:20px;
+width:100%;
+}
+
+/* FILTER CARD */
+
+.filter-card{
+width:100%;
+height:120px;
+
+background:white;
+border-radius:16px;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+font-size:20px;
+font-weight:600;
+
+box-shadow:0 8px 20px rgba(0,0,0,0.08);
+
+cursor:pointer;
+
+transition:0.2s;
+
+text-decoration:none;
+color:#111;
+}
+
+
+.filter-card:hover{
+transform:scale(1.05);
+box-shadow:0 16px 35px rgba(0,0,0,0.18);
+}
+
+/* MOVIE CARD */
+
+.movie-card{
+width:220px;
+
+background:white;
+border-radius:16px;
+overflow:hidden;
+
+box-shadow:0 8px 20px rgba(0,0,0,0.08);
+
+transition:0.25s;
+
+display:flex;
+flex-direction:column;
+
+text-decoration:none;
+color:#111;
+}
+
+.movie-card:hover{
+transform:translateY(-4px);
+box-shadow:0 14px 30px rgba(0,0,0,0.12);
+}
+
+.movie-poster{
+width:100%;
+aspect-ratio:2/3;
+object-fit:cover;
+}
+
+/* CONTENT */
+
+.movie-content{
+padding:12px;
+display:flex;
+flex-direction:column;
+gap:6px;
+}
+
+.movie-title{
+font-size:15px;
+font-weight:600;
+line-height:1.35;
+word-break:break-word;
+}
+
+.movie-meta{
+font-size:12px;
+color:#666;
+line-height:1.4;
+}
+
+h1{
+margin-bottom:30px;
+font-size:32px;
+text-align:left;
+}
+/* MOBILE */
+
+@media (max-width:768px){
+
+.grid{
+grid-template-columns:repeat(2,1fr);
+gap:14px;
+}
+
+.movie-card{
+width:100%;
+}
+
+.page{
+padding:24px 16px;
+}
+
+}
+</style>
+</head>
+
+<body>
+
+<site-header></site-header>
+
+<main class="page">
+
+<h1 id="title"></h1>
+
+<div id="content"></div>
+
+</main>
+
+<site-footer></site-footer>
+
+<script>
+
+/* LIMIT LIST */
+
+function limitList(list,max=5){
+
+if(list.length<=max){
+return list.join(", ")
+}
+
+const visible=list.slice(0,max).join(", ")
+const hidden=list.length-max
+
+return visible+" +"+hidden
+
+}
+
+/* MOVIES */
+const movies=[
+
+{
+id:1,
+title:"Inception",
+year:2010,
+genres:["Sci-Fi","Action","Thriller"],
+countries:["USA","UK"],
+poster:"https://image.tmdb.org/t/p/w500/edv5CZvWj09upOsy2Y6IwDhK8bt.jpg"
+},
+
+{
+id:2,
+title:"The Dark Knight",
+year:2008,
+genres:["Action","Crime","Drama"],
+countries:["USA","UK"],
+poster:"https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg"
+},
+
+{
+id:3,
+title:"Interstellar",
+year:2014,
+genres:["Sci-Fi","Drama","Adventure"],
+countries:["USA","UK"],
+poster:"https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg"
+},
+
+{
+id:4,
+title:"Dune: Part Two",
+year:2024,
+genres:["Sci-Fi","Adventure","Drama"],
+countries:["USA","Canada"],
+poster:"https://image.tmdb.org/t/p/w500/1pdfLvkbY9ohJlCjQH2CZjjYVvJ.jpg"
+},
+
+{
+id:5,
+title:"Oppenheimer",
+year:2023,
+genres:["Drama","History","Biography"],
+countries:["USA","UK"],
+poster:"https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2qR.jpg"
+},
+
+{
+id:6,
+title:"Avatar: The Way of Water",
+year:2022,
+genres:["Sci-Fi","Adventure","Action"],
+countries:["USA"],
+poster:"https://image.tmdb.org/t/p/w500/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg"
+},
+
+{
+id:7,
+title:"Joker",
+year:2019,
+genres:["Crime","Drama","Thriller"],
+countries:["USA"],
+poster:"https://image.tmdb.org/t/p/w500/udDclJoHjfjb8Ekgsd4FDteOkCU.jpg"
+},
+
+{
+id:8,
+title:"The Batman",
+year:2022,
+genres:["Action","Crime","Drama"],
+countries:["USA"],
+poster:"https://image.tmdb.org/t/p/w500/74xTEgt7R36Fpooo50r9T25onhq.jpg"
+},
+
+{
+id:9,
+title:"Mad Max: Fury Road",
+year:2015,
+genres:["Action","Adventure","Sci-Fi"],
+countries:["Australia","USA"],
+poster:"https://image.tmdb.org/t/p/w500/8tZYtuWezp8JbcsvHYO0O46tFbo.jpg"
+},
+
+{
+id:10,
+title:"Gladiator",
+year:2000,
+genres:["Action","Drama","Adventure"],
+countries:["USA","UK"],
+poster:"https://image.tmdb.org/t/p/w500/ty8TGRuvJLPUmAR1H1nRIsgwvim.jpg"
+},
+
+{
+id:11,
+title:"Top Gun: Maverick",
+year:2022,
+genres:["Action","Drama"],
+countries:["USA"],
+poster:"https://image.tmdb.org/t/p/w500/62HCnUTziyWcpDaBO2i1DX17ljH.jpg"
+},
+
+{
+id:12,
+title:"Mission: Impossible – Dead Reckoning",
+year:2023,
+genres:["Action","Adventure","Thriller"],
+countries:["USA"],
+poster:"https://image.tmdb.org/t/p/w500/NNxYkU70HPurnNCSiCjYAmacwm.jpg"
+},
+{
+id:13,
+title:"Inception",
+year:2010,
+genres:["Sci-Fi","Action","Thriller"],
+countries:["USA","UK"],
+poster:"https://image.tmdb.org/t/p/w500/edv5CZvWj09upOsy2Y6IwDhK8bt.jpg"
+},
+
+{
+id: 14,
+title:"Очень длинное название фильма которое может быть очень длинным и не должно ломать карточку",
+year:2024,
+genres:["Action","Sci-Fi","Thriller","Drama","Adventure","Mystery"],
+countries:["United States of America","United Kingdom","Canada","Australia","Germany","France"],
+poster:"https://image.tmdb.org/t/p/w500/8UlWHLMpgZm9bx6QYh0NFoq67TZ.jpg"
+},
+
+{
+id: 15,
+title:"Wonder Woman 1984",
+year:2020,
+genres:["Action","Fantasy"],
+countries:["USA"],
+poster:"https://image.tmdb.org/t/p/w500/8UlWHLMpgZm9bx6QYh0NFoq67TZ.jpg"
+}
+
+]
+
+/* CREATE MOVIE CARD */
+
+function createMovieCard(movie){
+
+const card=document.createElement("a")
+
+card.href="movie.html?id="+movie.id
+
+card.className="movie-card"
+
+card.innerHTML=`
+
+<img class="movie-poster" src="${movie.poster}">
+
+<div class="movie-content">
+
+<div class="movie-title">
+${movie.title}
+</div>
+
+<div class="movie-meta">
+${movie.year} • ${limitList(movie.genres)}
+</div>
+
+<div class="movie-meta">
+${limitList(movie.countries)}
+</div>
+
+</div>
+
+`
+
+return card
+
+}
+
+/* PARAMS */
+
+const params=new URLSearchParams(location.search)
+
+const type=params.get("type")
+const genre=params.get("genre")
+const year=params.get("year")
+
+const title=document.getElementById("title")
+const content=document.getElementById("content")
+
+/* RENDER MOVIES */
+
+function renderMovies(list){
+
+const grid=document.createElement("div")
+grid.className="grid"
+
+list.forEach(m=>{
+grid.appendChild(createMovieCard(m))
+})
+
+content.appendChild(grid)
+
+}
+
+/* TOP 10 */
+
+if(type==="top10"){
+
+title.innerText="Top 10"
+
+renderMovies(movies.slice(0,10))
+
+}
+
+/* NEWEST */
+
+else if(type==="newest"){
+
+title.innerText="Newest"
+
+const sorted=[...movies].sort((a,b)=>b.year-a.year)
+
+renderMovies(sorted)
+
+}
+
+/* GENRES */
+
+else if(type==="genres"){
+
+title.innerText="Genres"
+
+const genres=[...new Set(movies.flatMap(m=>m.genres))]
+
+const grid=document.createElement("div")
+grid.className="filters"
+
+genres.forEach(g=>{
+
+const card=document.createElement("a")
+
+card.className="filter-card"
+
+card.innerText=g
+
+card.href="catalog.html?genre="+encodeURIComponent(g)
+
+grid.appendChild(card)
+
+})
+
+content.appendChild(grid)
+
+}
+
+/* YEARS */
+
+else if(type==="years"){
+
+title.innerText="Years"
+
+const years=[]
+
+for(let y=2024;y>=2000;y--){
+years.push(y)
+}
+
+const grid=document.createElement("div")
+grid.className="filters"
+
+years.forEach(y=>{
+
+const card=document.createElement("a")
+
+card.className="filter-card"
+card.innerText=y
+
+card.href="catalog.html?year="+y
+
+grid.appendChild(card)
+
+})
+
+content.appendChild(grid)
+
+}
+
+/* MOVIES BY GENRE */
+
+else if(genre){
+
+title.innerText="Genre: "+genre
+
+renderMovies(
+
+movies.filter(m=>m.genres.includes(genre))
+
+)
+
+}
+
+/* MOVIES BY YEAR */
+
+else if(year){
+
+title.innerText="Year: "+year
+
+renderMovies(
+
+movies.filter(m=>m.year==year)
+
+)
+
+}
+
+</script>
+
+<script src="js/components.js"></script>
+  <script src="js/i18n.js"></script>
+</body>
+</html>

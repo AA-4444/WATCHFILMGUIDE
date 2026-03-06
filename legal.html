@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Legal</title>
+
+  <link rel="stylesheet" href="css/style.css">
+
+  <style>
+	.page {
+	  max-width: 900px;
+	  margin: auto;
+	  padding: 60px 20px;
+	}
+
+	.page h1 {
+	  margin-bottom: 20px;
+	  font-size: 32px;
+	}
+
+	.page p {
+	  margin-bottom: 16px;
+	  line-height: 1.6;
+	  color: #444;
+	}
+	* {
+	  box-sizing: border-box;
+	  margin: 0;
+	  padding: 0;
+	}
+	
+	html, body {
+	  min-height: 100%;
+	}
+	
+	body {
+	  min-height: 100vh;
+	  margin: 0;
+	  background: #f5f5f7;
+	  color: #111;
+	  font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "Helvetica Neue", Arial, sans-serif;
+	  display: flex;
+	  flex-direction: column;
+	}
+	
+	main {
+	  flex: 1;
+	}
+  </style>
+</head>
+<body>
+
+  <site-header></site-header>
+
+  <main class="page">
+	<h1 id="title"></h1>
+	<div id="content"></div>
+  </main>
+
+  <site-footer></site-footer>
+
+  <script>
+	const params = new URLSearchParams(location.search);
+	const page = params.get("page");
+
+	const title = document.getElementById("title");
+	const content = document.getElementById("content");
+
+	const pages = {
+	  privacy: {
+		title: "Privacy Policy",
+		html: `
+		  <p>This website does not collect personal data from visitors.</p>
+		  <p>We may use cookies to improve user experience and analytics.</p>
+		  <p>All movie data displayed on this website is provided for informational purposes only.</p>
+		`
+	  },
+	  terms: {
+		title: "Terms of Use",
+		html: `
+		  <p>By using this website you agree to the following terms.</p>
+		  <p>All content is provided for informational purposes only.</p>
+		  <p>The website owners are not responsible for external links or third party content.</p>
+		`
+	  },
+	  cookies: {
+		title: "Cookie Policy",
+		html: `
+		  <p>This website may use cookies to improve user experience.</p>
+		  <p>Cookies are small text files stored in your browser.</p>
+		  <p>You can disable cookies in your browser settings.</p>
+		`
+	  },
+	  contacts: {
+		title: "Contacts",
+		html: `
+		  <p>You can contact us using the following email:</p>
+		  <p><b>support@cinemaonair.com</b></p>
+		  <p>We usually respond within 24-48 hours.</p>
+		`
+	  }
+	};
+
+	const current = pages[page] || pages.privacy;
+	title.textContent = current.title;
+	content.innerHTML = current.html;
+  </script>
+
+  <script src="js/components.js"></script>
+  <script src="js/i18n.js"></script>
+
+</body>
+</html>

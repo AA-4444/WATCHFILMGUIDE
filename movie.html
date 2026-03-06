@@ -1,0 +1,317 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Movie</title>
+
+<link rel="stylesheet" href="css/style.css">
+
+<style>
+
+/* SAME FONT AS INDEX */
+
+body{
+background:#f5f5f7;
+color:#111;
+font-family:-apple-system,BlinkMacSystemFont,"SF Pro Display","Helvetica Neue",Arial,sans-serif;
+margin:0;
+}
+
+/* PAGE */
+
+.movie-page{
+max-width:1200px;
+margin:40px auto;
+padding:0 20px;
+}
+
+/* TOP BLOCK */
+
+.movie-top{
+display:grid;
+grid-template-columns:320px 1fr;
+gap:40px;
+align-items:start;
+}
+.movie-card {
+  width: 220px;  /* ← добавь эту строку */
+  background: white;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+  transition: 0.25s;
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+  color: inherit;
+}
+.grid {
+  display: flex;        /* ← меняй grid на flex */
+  flex-wrap: wrap;      /* ← чтобы переносились */
+  gap: 20px;
+}
+/* POSTER */
+
+.movie-poster-large{
+width:100%;
+border-radius:16px;
+box-shadow:0 12px 30px rgba(0,0,0,0.15);
+}
+
+/* INFO */
+
+.movie-info h1{
+font-size:36px;
+margin-bottom:12px;
+font-weight:700;
+}
+
+.movie-meta{
+font-size:15px;
+color:#666;
+margin-bottom:10px;
+}
+
+.movie-description{
+font-size:16px;
+line-height:1.6;
+margin-top:16px;
+max-width:700px;
+}
+
+/* TRAILER */
+
+.trailer{
+margin-top:40px;
+}
+
+.trailer iframe{
+width:100%;
+height:520px;
+border-radius:16px;
+border:none;
+}
+
+/* SIMILAR */
+
+.similar{
+margin-top:60px;
+}
+
+.similar h2{
+font-size:26px;
+margin-bottom:20px;
+}
+
+.similar-row{
+display:flex;
+gap:16px;
+overflow-x:auto;
+}
+
+.similar-row::-webkit-scrollbar{
+display:none;
+}
+
+.similar-card{
+flex:0 0 180px;
+background:white;
+border-radius:14px;
+overflow:hidden;
+box-shadow:0 8px 20px rgba(0,0,0,0.08);
+cursor:pointer;
+transition:.2s;
+}
+
+.similar-card:hover{
+transform:translateY(-4px);
+box-shadow:0 14px 30px rgba(0,0,0,0.12);
+}
+
+.similar-card img{
+width:100%;
+aspect-ratio:2/3;
+object-fit:cover;
+}
+
+.similar-title{
+padding:10px;
+font-size:14px;
+}
+
+/* MOBILE */
+
+@media(max-width:768px){
+
+.movie-top{
+grid-template-columns:1fr;
+}
+
+.trailer iframe{
+height:240px;
+}
+
+.movie-info h1{
+font-size:28px;
+}
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<site-header></site-header>
+
+
+<main class="movie-page">
+
+<div class="movie-top">
+
+<img class="movie-poster-large" id="poster">
+
+<div class="movie-info">
+
+<h1 id="title"></h1>
+
+<div class="movie-meta">
+<span data-i18n="year"></span>: <span id="year"></span>
+</div>
+
+<div class="movie-meta">
+<span data-i18n="runtime"></span>: <span id="runtime"></span>
+</div>
+
+<div class="movie-meta">
+<span data-i18n="rating"></span>: <span id="rating"></span>
+</div>
+
+<div class="movie-meta">
+<span data-i18n="genres"></span>: <span id="genres"></span>
+</div>
+
+<div class="movie-meta">
+<span data-i18n="countries"></span>: <span id="countries"></span>
+</div>
+
+<p class="movie-description" id="description"></p>
+
+</div>
+
+</div>
+
+
+<div class="trailer">
+
+<iframe id="trailer"></iframe>
+
+</div>
+
+
+<div class="similar">
+
+<h2 data-i18n="moreMovies">More Movies</h2>
+
+<div class="similar-row" id="similar"></div>
+
+</div>
+
+</main>
+
+
+<site-footer></site-footer>
+
+
+<script src="js/components.js"></script>
+<script src="js/i18n.js"></script>
+
+<script>
+
+/* MOVIE DATA */
+
+const movie = {
+
+title:"Inception",
+
+year:2010,
+
+runtime:"148 min",
+
+rating:"8.8 IMDB",
+
+genres:["Sci-Fi","Action","Thriller"],
+
+countries:["USA","UK"],
+
+description:"A thief who steals corporate secrets through dream-sharing technology is given the inverse task of planting an idea into the mind of a CEO.",
+
+poster:"https://image.tmdb.org/t/p/w500/edv5CZvWj09upOsy2Y6IwDhK8bt.jpg",
+
+trailer:"https://www.youtube.com/embed/YoHD9XEInc0"
+
+}
+
+
+
+/* RENDER MOVIE */
+
+document.getElementById("title").innerText = movie.title
+document.getElementById("year").innerText = movie.year
+document.getElementById("runtime").innerText = movie.runtime
+document.getElementById("rating").innerText = movie.rating
+document.getElementById("genres").innerText = movie.genres.join(", ")
+document.getElementById("countries").innerText = movie.countries.join(", ")
+document.getElementById("description").innerText = movie.description
+document.getElementById("poster").src = movie.poster
+document.getElementById("trailer").src = movie.trailer
+
+
+
+/* SIMILAR MOVIES */
+
+const similarMovies=[
+
+{
+title:"Interstellar",
+poster:"https://image.tmdb.org/t/p/w500/gEU2QniE6E77NI6lCU6MxlNBvIx.jpg"
+},
+
+{
+title:"Tenet",
+poster:"https://image.tmdb.org/t/p/w500/k68nPLbIST6NP96JmTxmZijEvCA.jpg"
+},
+
+{
+title:"The Dark Knight",
+poster:"https://image.tmdb.org/t/p/w500/qJ2tW6WMUDux911r6m7haRef0WH.jpg"
+}
+
+]
+
+const container = document.getElementById("similar")
+
+similarMovies.forEach(m=>{
+
+const card=document.createElement("div")
+
+card.className="similar-card"
+
+card.innerHTML=`
+<img src="${m.poster}">
+<div class="similar-title">${m.title}</div>
+`
+
+container.appendChild(card)
+
+})
+
+
+</script>
+
+</body>
+</html>
