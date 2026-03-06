@@ -641,3 +641,36 @@ display:block;
 }
 
 }
+.header-actions{
+display:flex;
+align-items:center;
+gap:12px;
+}
+
+.lang{
+background:none;
+border:none;
+color:#111;
+font-size:16px;
+font-weight:600;
+cursor:pointer;
+
+height:32px;
+display:flex;
+align-items:center;
+}
+
+.menu-toggle{
+background:none;
+border:none;
+color:#111;
+font-size:26px;
+cursor:pointer;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+line-height:1;
+transform: translateY(-2px); /* поднимает кнопку */
+}
